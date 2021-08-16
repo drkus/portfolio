@@ -2,6 +2,11 @@
   text-align: center;
 }
 
+/* dropdown 아래 화살표 제거 */
+.dropdown-toggle::after{
+  content: none !important
+}
+
 .background{
   background-image: url('aumu.jpg');
   background-position: center;

@@ -6,12 +6,14 @@ import { useState } from 'react';
 import Data from './data.js';
 import Detail from './Detail.js';
 import { Link, Route, Switch } from 'react-router-dom';
-
+import axios from 'axios';
 
 
 function App() {
-  let [shoes,shoes변경] = useState(Data);
- 
+  let [shoes, shoes변경] = useState(Data);
+  let [addBtn, addBtn변경] = useState(true); // 더보기 버튼 클릭 시, 더보기 버튼 노출 관련 bool 변수
+  let [loadingUi, loadingUi변경] = useState(false);// 로딩중 UI
+  let [loadingFailUi, loadingFailUi변경] = useState(false);
 
   return (
     <div className="App">
@@ -20,8 +22,8 @@ function App() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
-            <Nav.Link>Home</Nav.Link>
-            <Nav.Link href="/detail/0">Detail</Nav.Link>
+            <Nav.Link as={ Link } to="/">Home</Nav.Link>
+            <Nav.Link as={ Link } to="/detail/0">Detail</Nav.Link>
             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
               <NavDropdown.Item>Action</NavDropdown.Item>
               <NavDropdown.Item>Another action</NavDropdown.Item>
@@ -57,7 +59,45 @@ function App() {
                 )
               })
             }
-            </div>
+            {
+              addBtn === true 
+              ?
+              <button className="btn btn-primary" onClick={() => {
+                addBtn변경(false); // 더보기 버튼 미노출
+                loadingUi변경(true); // 로딩 중입니다.. 문구 노출
+                
+
+                axios.get('https://codingapple1.github.io/shop/data2.json')
+                .then((result) => { 
+                  loadingUi변경(false); // 로딩 중입니다... 문구 제거
+                  shoes변경([...shoes, ...result.data]);
+                })
+                .catch(() => { 
+                  loadingFailUi변경(true);// 로딩 실패 문구 노출
+                  console.log('get error',result); 
+                })
+
+
+              }}>더보기</button>
+              : null
+            }
+            {
+              loadingUi === true
+              ?
+              <div className="loading"><p>로딩 중입니다..</p></div> 
+              :
+              null
+            }
+            {
+              loadingFailUi === true
+              ?
+              <div className="loading"><p>로딩 실패</p></div> 
+              :
+              null
+            }
+               
+
+            </div> 
           </div>
         </Route>
 

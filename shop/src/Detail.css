@@ -3,3 +3,15 @@
     color : blue;
 }
 
+.my-alert {
+    background : #ffffc8;
+    padding : 15px;
+    border-radius : 5px;
+    max-width : 500px;
+    width : 100%;
+    margin : auto;
+  }
+
+  .my-alert p {
+    margin-bottom : 0;
+  }

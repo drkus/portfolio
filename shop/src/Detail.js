@@ -1,6 +1,6 @@
 /* eslint-disable */ 
 import { props } from 'bluebird';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import './Detail.css';
@@ -15,6 +15,19 @@ let H4Title = styled.h4`
 // 프롭스로 보는 값은 {값}, 또는 "문자"로 가능
 
 function Detail(props){
+    let [inputData, inputData변경] = useState('');
+    let [alertShow, alertShow변경] = useState(true);
+    // lifecyle hook과 비슷한 useEffect 
+    // 기본적으로 컴포넌트 mount 될 때 실행 'return 함수'는 unmount 될 때 호출 ',[컴포넌트]'는 변경 될 때 실행
+    // tip : ,[] 설정 시 컴포넌트 최초 등장 시에만 동작
+    useEffect(() => {
+        let alertTimer = setTimeout(() => {
+            alertShow변경(false);
+        }, 2000);
+        return () => { clearTimeout(alertTimer); }
+    },[alertShow, inputData]);
+
+
     let { id } = useParams(); // 파라미터 id
     let history = useHistory(); //  유저 방문 기록
     let selectProduct = props.shoes.find((a)=>{
@@ -42,6 +55,18 @@ function Detail(props){
             bConnet === true
             ? 
             <div className="row">
+                { inputData }
+                <input onChange={(e) => {inputData변경(e.target.value)}}/>
+                {
+                    alertShow === true
+                    ?
+                    <div className="my-alert">
+                        <p>재고가 얼마 남지 않았습니다</p>
+                    </div>
+                    :
+                    null
+                }
+
                 <div className="col-md-6">
                     <img src={ imgUrl } alt="img" width="100%" />
                 </div>
