@@ -11,6 +11,7 @@ import axios from 'axios';
 
 function App() {
   let [shoes, shoes변경] = useState(Data);
+  let [inventory, inventory변경] = useState([10,11,12]);// 재고 데이터
   let [addBtn, addBtn변경] = useState(true); // 더보기 버튼 클릭 시, 더보기 버튼 노출 관련 bool 변수
   let [loadingUi, loadingUi변경] = useState(false);// 로딩중 UI
   let [loadingFailUi, loadingFailUi변경] = useState(false);
@@ -103,7 +104,7 @@ function App() {
 
         {/* 상세페이지 /:id url 파라미터 */}
         <Route path="/detail/:id">
-          <Detail shoes = { shoes }/>
+          <Detail shoes = { shoes } inventory = { inventory } inventory변경 = { inventory변경 }/>
         </Route>  
         {/* <Route path="/어쩌구" componet={Modal}></Route> */}
 
