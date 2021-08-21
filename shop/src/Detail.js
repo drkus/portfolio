@@ -22,7 +22,8 @@ function Detail(props){
     let [infoPopEnd, infoPopEnd변경] = useState(false); // 팝업 말림 문구 끝
     let [infoPopError, infoPopError변경] = useState(false); // 팝업 에러 문구 끝
 
-    let [infoCnt, infoCnt변경] = useState(20);
+    const TIME = 3;
+    let [infoCnt, infoCnt변경] = useState(TIME);
     let changCnt = infoCnt;
     const TIMER_ADD = 1000;
     const TIMER_CNT = infoCnt * TIMER_ADD;
