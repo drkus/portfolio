@@ -18,9 +18,11 @@ function Detail(props){
     // lifecyle hook과 비슷한 useEffect 
     // 기본적으로 컴포넌트 mount 될 때 실행 'return 함수'는 unmount 될 때 호출 ',[컴포넌트]'는 변경 될 때 실행
     // tip : ,[] 설정 시 컴포넌트 최초 등장 시에만 동작
-    let [infoPopStart, infoPopStart변경] = useState(true); //팝업 알림 문구 시작
-    let [infoPopEnd, infoPopEnd변경] = useState(false); // 팝업 말림 문구 끝
-    let [infoPopError, infoPopError변경] = useState(false); // 팝업 에러 문구 끝
+    const INFO_POP_SHOW = true; // 재고 알림 팝업 노출 여부
+
+    let [infoAblePop, infoAblePop변경] = useState(true);//'재고 있음' 알림 팝업
+    let [infoIsNotPop, infoIsNotPop변경] = useState(false);// '재고 없음' 알림 팝업
+    let [infoErrorPop, infoErrorPop변경] = useState(false);// '에러 알림' 팝업
 
     const TIME = 3;
     let [infoCnt, infoCnt변경] = useState(TIME);
@@ -29,19 +31,46 @@ function Detail(props){
     const TIMER_CNT = infoCnt * TIMER_ADD;
 
     // 화면 초기화([주문하기] 버튼, n초(TIMER_CNT) 후 알림창 사라짐)
-    useEffect(() => { // 처음 화면 로드되면 [주문하기] 버튼 disabled 후, n초(TIMER_CNT) 후 disabled 해제
-        document.getElementById('buyBtn').disabled = true; // 버튼 불가능으로 초기화
-        const INFO_TIMER = setTimeout(() => {
-            infoPopStart변경(false);
-            infoPopError변경(false);// 정상 시간 외 disabled 지우고 접근 할 경우 error창 노출되는데 정상적인 구매 가능한 시간이면 error 팝업도 제거
-            document.getElementById('buyBtn').disabled = false; // 버튼 사용 가능
-        }, TIMER_CNT);
-        return () => { clearTimeout(INFO_TIMER); }
+    useEffect(() => {// 처음 화면 로드되면 [주문하기] 버튼 disabled 후, n초(TIMER_CNT) 후 disabled 해제
+        let infoPopTimer;
+        if(INFO_POP_SHOW){
+            document.getElementById('buyBtn').disabled = true;// [주문하기] 버튼 비활성화
+            if(props.inventory[0] > 0){// 재고 있을 경우, TIMER_CNT 후 알림 팝업 닫고 [주문하기] 버튼 활성화 
+                infoPopTimer = setTimeout(() => {
+                    infoAblePop변경(false);// '재고 있음 알림' 팝업 닫기
+                    document.getElementById('buyBtn').disabled = false;// [주문하기] 버튼 활성화
+        
+                }, TIMER_CNT);
+            }
+            else if(props.inventory[0] == 0){// 재고가 없을 경우
+                infoAblePop변경(false);// '재고 있음 알림' 팝업 닫기
+                infoIsNotPop변경(true);// '재고 없음 알림' 팝업 열기
+            }
+            else{// 그 밖에 잘못된 데이터가 있을 경우
+                infoErrorPop변경(true);// '에러 알림' 팝업 열기
+            }
+        }
+        else if(!INFO_POP_SHOW){
+            infoAblePop변경(false);// '재고 있음 알림' 팝업은 초기 값이 true, '재고 있음 알림' 팝업 닫기
+            if(props.inventory[0] > 0){// 재고 있을 경우 
+                document.getElementById('buyBtn').disabled = false; // [주문하기] 버튼 활성화
+            }
+            if(props.inventory[0] == 0){// 재고가 없을 경우
+                document.getElementById('buyBtn').disabled = true;// [주문하기] 버튼 비활성화
+                infoAblePop변경(false);// '재고 있음 알림' 팝업 닫기
+                infoIsNotPop변경(true);// '재고 없음 알림' 팝업 열기
+            }
+            else{// 그 밖에 잘못된 데이터가 있을 경우
+                document.getElementById('buyBtn').disabled = true;// [주문하기] 버튼 비활성화
+                infoErrorPop변경(true);// '에러 알림' 팝업 열기
+            }
+        }
+        return () => { clearTimeout(infoPopTimer); }
     },[]);
 
     useEffect(() => { // 알림창 내 카운터
         const INFO_CNT_TIMER = setTimeout(() => {
-            if(changCnt!=0){
+            if(changCnt != 0 && infoAblePop){
                 changCnt--;
                 infoCnt변경(changCnt);
             }
@@ -72,7 +101,7 @@ function Detail(props){
     // App.js props로 온 'inventory 뜻 : 재고' 관련 데이터
     let copyInventroy = [...props.inventory]; // 깊은 복사
     function CalInventory(arr){// arr은 배열로 [주문하기] 버튼 클릭 시, copyInventroy[id]를 받는다
-        if(!infoPopStart){// 재고 알림창 사라지고, 재고 감소
+        if(!infoAblePop){// 재고 알림창 사라지고, 재고 감소
             if(copyInventroy[id] != 0 && copyInventroy[id] > 0){// 재고 0까지 감소
                 copyInventroy[id] -= 1;
                 if(copyInventroy[id] > 0){
@@ -81,16 +110,16 @@ function Detail(props){
                 else if(copyInventroy[id] == 0){// 재고가 0 개일 경우, 재고 완전 소진, [주문하기] 버튼 disabled 변경 
                     document.getElementById('buyBtn').disabled = true;
                     props.inventory변경(copyInventroy);
-                    infoPopEnd변경(true); // 품절 팝업 노출
+                    infoIsNotPop변경(true); // 품절 팝업 노출
                 }
             }
             else{// 품절(재고 0개) 이후, 뒤로가기, 캐시 등 브라우저 관리자모드 등에서 disabled 뚫고 클릭 시
                 document.getElementById('buyBtn').disabled = true;
-                infoPopError변경(true); // error 팝업 노출
+                infoErrorPop변경(true); // error 팝업 노출
             }
         }
         else{// 대기 팝업 사라지기 전, 클릭 시
-            infoPopError변경(true); // error 팝업 노출
+            infoErrorPop변경(true); // error 팝업 노출
         }
     }
 
@@ -104,7 +133,7 @@ function Detail(props){
                 ? 
                 <div className="row">
                 {
-                    infoPopStart === true
+                    infoAblePop === true
                     ?
                     <div className="my-alert">
                         <p>{ infoCnt }초 후 주문 하실 수 있습니다.</p>
@@ -113,7 +142,7 @@ function Detail(props){
                     null
                 }
                 {
-                    infoPopEnd === true
+                    infoIsNotPop === true
                     ?
                     <div className="my-alert-end">
                         <p>상품이 품절 되었습니다.</p>
@@ -122,7 +151,7 @@ function Detail(props){
                     null
                 }
                 {
-                    infoPopError === true
+                    infoErrorPop === true
                     ?
                     <div className="my-alert-error">
                         <p>주문을 할 수 없습니다.</p>
