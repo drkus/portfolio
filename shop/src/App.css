@@ -8,10 +8,10 @@
 }
 
 .background{
-  background-image: url('aumu.jpg');
+  background-image: url('main.jpg');
   background-position: center;
-  background-size: contain;
-  color: black;
+  /* background-size: contain; */
+  color: white;
 }
 .App-logo {
   height: 40vmin;

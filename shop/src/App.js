@@ -10,28 +10,23 @@ import axios from 'axios';
 
 
 function App() {
+  console.log(Link);
   let [shoes, shoes변경] = useState(Data);
   let [inventory, inventory변경] = useState([4,3,9]);// 재고 데이터
   let [addBtn, addBtn변경] = useState(true); // 더보기 버튼 클릭 시, 더보기 버튼 노출 관련 bool 변수
   let [loadingUi, loadingUi변경] = useState(false);// 로딩중 UI
   let [loadingFailUi, loadingFailUi변경] = useState(false);
-
+  let [linkUrl, linkUrl변경] = useState(['/detail/']);// 이미지 선택 시 이동하는 경로 ]
+  let url = [...linkUrl];
+  
   return (
     <div className="App">
       <Navbar bg="light" expand="lg">
-        <Navbar.Brand>Shop</Navbar.Brand>
+        <Navbar.Brand as={ Link } to="/">Shop</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
-            <Nav.Link as={ Link } to="/">Home</Nav.Link>
-            <Nav.Link as={ Link } to="/detail/0">Detail</Nav.Link>
-            <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-              <NavDropdown.Item>Action</NavDropdown.Item>
-              <NavDropdown.Item>Another action</NavDropdown.Item>
-              <NavDropdown.Item>Something</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item>Separated link</NavDropdown.Item>
-            </NavDropdown>
+            <Nav.Link as={ Link } to="/detail/0">상품</Nav.Link>
           </Nav>
           <Form inline>
             <FormControl type="text" placeholder="Search" className="mr-sm-2" />
@@ -39,7 +34,7 @@ function App() {
           </Form>
         </Navbar.Collapse>
       </Navbar>
-
+      
       {/* 택 1, 해당 맨 위 */}
       <Switch>
         {/* 기본페이지 exact */}
@@ -48,15 +43,16 @@ function App() {
             <h1>신발 쇼핑몰 입니다.</h1>
               <p>20% 한정 세일</p>
               <p>
-                <Button variant="primary">드러가기🥰</Button>
+                <Button variant="primary" as={ Link } to="/detail/0">드러가기🥰</Button>
               </p>
           </Jumbotron>
           <div className="container">
             <div className="row">
             {
+              
               shoes.map((shoesData,i) => {
                 return(
-                  <Card shoes={shoesData} i={i} key={i}/>
+                  <Card shoes={shoesData} i={i} key={i} url={url+i} />
                 )
               })
             }
@@ -119,10 +115,12 @@ function App() {
 
 function Card(props){
   return(
-    <div className="col-md-4">
-      <img alt="신발이미지" src={ 'https://codingapple1.github.io/shop/shoes' + (props.i+1) + '.jpg' } width="100%"/>
-      <h4>{props.shoes.title}</h4>
-      <p>{props.shoes.content},{props.shoes.price}</p>
+    <div className="col-md-4" >
+      <a href={props.url}>
+        <img alt="신발이미지" src={ 'https://codingapple1.github.io/shop/shoes' + (props.i+1) + '.jpg' } width="100%"/>
+        <h4>{props.shoes.title}</h4>
+        <p>{props.shoes.content},{props.shoes.price}</p>
+      </a>
     </div>    
   );
 }

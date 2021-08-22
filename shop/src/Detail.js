@@ -55,7 +55,7 @@ function Detail(props){
             if(props.inventory[0] > 0){// 재고 있을 경우 
                 document.getElementById('buyBtn').disabled = false; // [주문하기] 버튼 활성화
             }
-            if(props.inventory[0] == 0){// 재고가 없을 경우
+            else if(props.inventory[0] == 0){// 재고가 없을 경우
                 document.getElementById('buyBtn').disabled = true;// [주문하기] 버튼 비활성화
                 infoAblePop변경(false);// '재고 있음 알림' 팝업 닫기
                 infoIsNotPop변경(true);// '재고 없음 알림' 팝업 열기
