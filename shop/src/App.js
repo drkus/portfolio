@@ -10,7 +10,6 @@ import axios from 'axios';
 
 
 function App() {
-  console.log(Link);
   let [shoes, shoes변경] = useState(Data);
   let [inventory, inventory변경] = useState([4,3,9]);// 재고 데이터
   let [addBtn, addBtn변경] = useState(true); // 더보기 버튼 클릭 시, 더보기 버튼 노출 관련 bool 변수
@@ -26,7 +25,7 @@ function App() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
-            <Nav.Link as={ Link } to="/detail/0">상품</Nav.Link>
+            {/* <Nav.Link as={ Link } to="/detail/0">상품</Nav.Link> */}
           </Nav>
           <Form inline>
             <FormControl type="text" placeholder="Search" className="mr-sm-2" />
@@ -43,7 +42,7 @@ function App() {
             <h1>신발 쇼핑몰 입니다.</h1>
               <p>20% 한정 세일</p>
               <p>
-                <Button variant="primary" as={ Link } to="/detail/0">드러가기🥰</Button>
+                {/* <Button variant="primary" as={ Link } to="/detail/0">드러가기🥰</Button> */}
               </p>
           </Jumbotron>
           <div className="container">
@@ -59,22 +58,25 @@ function App() {
             {
               addBtn === true 
               ?
-              <button className="btn btn-primary" onClick={() => {
+              <button className="btn btn-dark" onClick={() => {
                 addBtn변경(false); // 더보기 버튼 미노출
                 loadingUi변경(true); // 로딩 중입니다.. 문구 노출
                 
-
                 axios.get('https://codingapple1.github.io/shop/data2.json')
                 .then((result) => { 
                   loadingUi변경(false); // 로딩 중입니다... 문구 제거
-                  shoes변경([...shoes, ...result.data]);
+                  shoes변경([...shoes, ...result.data]); // result.data가 data.js에 추가
+                  // (임시) 재고 데이터를 axios에서 받은 result.data 의 id 값을 inventory로 설정
+                  let inventoryCopy = [...inventory];
+                  result.data.forEach((a,i) => {
+                    inventoryCopy.push(result.data[i].id);
+                  });
+                  inventory변경(inventoryCopy);
                 })
                 .catch(() => { 
                   loadingFailUi변경(true);// 로딩 실패 문구 노출
                   console.log('get error',result); 
                 })
-
-
               }}>더보기</button>
               : null
             }
@@ -116,11 +118,10 @@ function App() {
 function Card(props){
   return(
     <div className="col-md-4" >
-      <a href={props.url}>
         <img alt="신발이미지" src={ 'https://codingapple1.github.io/shop/shoes' + (props.i+1) + '.jpg' } width="100%"/>
         <h4>{props.shoes.title}</h4>
         <p>{props.shoes.content},{props.shoes.price}</p>
-      </a>
+        <Button className="cardBtn" variant="primary" as={ Link } to={props.url}>구매하기🥰</Button>
     </div>    
   );
 }

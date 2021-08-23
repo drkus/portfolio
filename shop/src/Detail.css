@@ -39,3 +39,7 @@
   .my-alert-error p {
     margin-bottom : 0;
   }
+
+  .product img{
+    max-width: 50%;
+  }

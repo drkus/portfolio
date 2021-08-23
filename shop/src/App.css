@@ -7,6 +7,11 @@
   content: none !important
 }
 
+.cardBtn{
+  margin-bottom: 20px;
+}
+
+
 .background{
   background-image: url('main.jpg');
   background-position: center;
