@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useState } from 'react';
+import React, { useState, useRef  } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { end } from 'worker-farm';
@@ -67,22 +67,98 @@ function App() {
     글제목들변경(newData);  
   }
 
+let [imgHanga,imgHanga변경] = useState([
+  '1-9',
+  '10-18',
+  '19-20',
+  '21-29',
+  '30-38',
+  '39-41',
+  '42-50',
+  '51-59',
+  '60-62',
+  '63-71',
+  '72-80',
+  '81-83',
+  '84-92',
+  '93-101',
+  '102-104',
+  '105-113',
+  '114-122',
+  '123-125',
+  '126-134',
+  '135-143',
+  '144-146',
+  '147-155',
+  '156-164',
+  '165-167',
+  '168-176',
+  '177-185',
+  '186-188',
+  '189-197',
+  '198-206',
+  '207-209',
+  '210-217',
+  '218-226',
+  '227-230',
+  '231-239',
+  '240-248',
+  '249-251',
+  '252-260',
+  '261-269',
+  '270'
+]);
+
+function showFront(id){
+  document.getElementById(id).style.display = "none";
+  document.getElementById(id+"b").style.display = "block";
+}
+function showBack(id){
+  document.getElementById(id).style.display = "none";
+  var arr = [...id];
+  arr.pop();
+  var urlText = '';
+  arr.forEach((e,i)=>{
+    urlText += arr[i];
+  })
+  document.getElementById(urlText).style.display = "block";
+  
+}
+
+
+
+
+let imgUrl = "hanga/"+imgHanga[0]+".JPG";
   return (
     <div className="App">
       <div className="black-nav">
-        <div>개발자 블로그</div>
+        <div>국왕국어 사자성어 270</div>
       </div>
-      <button className="btn3" onClick={ 정렬기능 }>정렬</button>
+      {/* <button className="btn3" onClick={ 정렬기능 }>정렬</button>
       <button onClick={ ()=>{ 모달스위치변경(!모달스위치) } }> 상세페이지 모달 </button>
 
       <div className="publish">
         <input onChange={ (e)=>{ 입력데이터변경(e.target.value) } }/>
         <button onClick={ ()=>{ 글추가(입력데이터) } }>저장</button>
+      </div> */}
+      <div className="hanga">
+        {
+          imgHanga.map((e,i)=>{
+            return(
+              <div>
+                <img onClick={(e)=>{showFront(e.target.id)}} className="front" id={imgHanga[i]} src={"hanga/"+imgHanga[i]+".JPG"} alt="" width="100%"></img>
+                <img onClick={(e)=>{showBack(e.target.id)}} className="back" id={imgHanga[i]+"b"} src={"hanga/"+imgHanga[i]+"b"+".JPG"} alt="" width="100%"></img><hr/>
+              </div>
+              
+            );
+          })
+        }
+     
+        
       </div>
 
-
-
-      {
+     
+      {/* {
         모달스위치 === true
         ? <Modal 모달글제목 = {모달글제목} />
         : null
@@ -97,8 +173,8 @@ function App() {
           )
         })
       }
+      <Profile /> */}
 
-      <Profile />
     </div>
   );
 }
